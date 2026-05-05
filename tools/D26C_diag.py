@@ -12,11 +12,13 @@ Logs per prompt (pre/post):
   hotset: lookups, hits, misses, total_bytes_resident
 
 Per-expert bytes (architecture constants):
-  w1+w3 packed:   2 × EXPERT_FF(2048) × HIDDEN(4096)/2 = 16 MB
-  w2 packed:      HIDDEN(4096) × EXPERT_FF(2048)/2     =  4 MB
-  w1+w3 scale:    2 × EXPERT_FF × HIDDEN/32            = 0.5 MB
-  w2 scale:       HIDDEN × EXPERT_FF/32                = 0.25 MB
-  total ≈ 20.75 MB per expert (mmap pages touched per cold-load)
+  w1 packed:      EXPERT_FF(2048) × HIDDEN(4096)/2 =  4 MB
+  w3 packed:      EXPERT_FF(2048) × HIDDEN(4096)/2 =  4 MB
+  w2 packed:      HIDDEN(4096)    × EXPERT_FF/2     =  4 MB
+  w1 scale:       EXPERT_FF × HIDDEN/32             =  0.25 MB
+  w3 scale:       EXPERT_FF × HIDDEN/32             =  0.25 MB
+  w2 scale:       HIDDEN    × EXPERT_FF/32          =  0.25 MB
+  total ≈ 12.75 MB per expert (mmap pages touched per cold-load)
 
 NO math touch. NO C++ touch. Only Python diagnostic + 1 prompt-per-prompt smoke.
 """

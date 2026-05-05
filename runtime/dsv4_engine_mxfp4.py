@@ -51,20 +51,21 @@ Memory plan (target <40 GB GPU on 121 GB unified):
 
 Engine init target: <30 s (no full dequant, just open mmap + load BF16/F32/FP8).
 
-PRESERVE rollback: dsv4_engine_q3.py untouched.
+Current status (matches README):
+  - Forced-token R2-vs-C++ equivalence: 8/8 argmax match, logits cosine
+    0.9994 - 0.9999.
+  - Per-layer R2-vs-C++ cosine bisect: no first_bad_layer in 0..42.
+  - MLA (full multi-head latent attention) and YARN compressed RoPE are
+    wired in the C++ engine and validated against the reference.
+  - Cold-load lifecycle: madvise(MADV_DONTNEED) + per-slot cudaEvent
+    async path + batched (O(1) event/wait/madvise per pack call).
 
-CAVEATS for B5 smoke E2E (NOT addressed in this engine):
-  - MLA attention is the same simplified BF16-after-projection path used by Q3
-    engine (head-mean collapse + tile to hidden). Real K/V decompression via
-    wk_b/wv_b is not in HF snapshot top-level; further work needed for
-    bit-exact attention.
-  - Lightning Indexer (sliding-window asym attention) NOT wired.
-  - RoPE / YARN positional embedding NOT wired (BF16 path-through, OK for
-    layer 0 smoke; will affect quality of full-stack E2E).
-  - Shared expert SwiGLU uses standard formula (no swiglu_limit clamp).
-  - MTP layer (mtp.0.*) NOT loaded (next-token speculative head).
-  - Router uses full softmax-based path (NOT the tid2eid I64 fast-path; that
-    is a LUT optimization deferred to perf sprint).
+Out of scope for this release:
+  - CUDA Graph capture
+  - MTP / speculative decode
+  - Request batching
+  - OpenAI-compatible server
+  - Lightning Indexer (sliding-window asymmetric attention)
 """
 
 

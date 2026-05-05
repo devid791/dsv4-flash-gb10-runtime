@@ -39,8 +39,9 @@ import sys
 import time
 from pathlib import Path
 
-WORKTREE = "${DSV4_HOME}"  # D17B4: post-fix
-KERNEL_SRC_WT = "${DSV4_KERNEL_DEPS}"  # kernel .so live here (D14 reuses prebuilt deps)
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+WORKTREE = os.environ.get("DSV4_HOME", _REPO_ROOT)
+KERNEL_SRC_WT = os.environ.get("DSV4_KERNEL_DEPS", WORKTREE)
 sys.path.insert(0, f"{WORKTREE}/runtime")
 
 import torch  # noqa: E402
@@ -300,9 +301,10 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--n-layers", type=int, default=43)
     p.add_argument("--top-n", type=int, default=8)
-    p.add_argument("--out", default=os.environ.get("DSV4_OUT", "/tmp") + "/D17B4_done.json")
-    p.add_argument("--dump-tensor", default=os.environ.get("DSV4_OUT", "/tmp") + "/D14_first_bad_dump.npz")
-    p.add_argument("--oracle-dump", default=os.environ.get("DSV4_OUT", "/tmp") + "/D17B4_r2_oracle.json")
+    _out_default = os.environ.get("DSV4_OUT", os.path.join(_REPO_ROOT, "out"))
+    p.add_argument("--out", default=os.path.join(_out_default, "D17B4_done.json"))
+    p.add_argument("--dump-tensor", default=os.path.join(_out_default, "D14_first_bad_dump.npz"))
+    p.add_argument("--oracle-dump", default=os.path.join(_out_default, "D17B4_r2_oracle.json"))
     p.add_argument("--skip-cpp", action="store_true")
     p.add_argument("--phase-a-only", action="store_true",
                    help="Only run R2 oracle, save oracle dump, exit (frees GPU)")

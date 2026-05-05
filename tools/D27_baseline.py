@@ -111,7 +111,9 @@ def main():
     ap.add_argument("--bank",   type=int, default=64, help="hotset bank size per layer (>= top_n)")
     ap.add_argument("--max_new", type=int, default=16)
     ap.add_argument("--tag",    type=str, required=True)
-    ap.add_argument("--out_dir", type=str, default="${DSV4_OUT}")
+    _repo_root = str(Path(__file__).resolve().parent.parent)
+    _out_default = os.environ.get("DSV4_OUT", os.path.join(_repo_root, "out"))
+    ap.add_argument("--out_dir", type=str, default=_out_default)
     args = ap.parse_args()
 
     if args.bank < args.top_n:
