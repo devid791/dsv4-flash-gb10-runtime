@@ -1,0 +1,40 @@
+# compiled artefacts
+*.so
+*.o
+*.a
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# environment
+.env
+.env.local
+
+# editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# build / output
+build/
+dist/
+out/
+
+# weights — never commit
+*.safetensors
+*.bin
+*.gguf
+tokenizer.json
+config.json
+*.h5
+
+# validation outputs
+*.log
+*.json
+!**/Makefile
